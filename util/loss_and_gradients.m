@@ -1,4 +1,4 @@
-function [loss, gradients] = loss_and_gradients(x, fieldIdeal, params)
+function [loss, gradients] = loss_and_gradients(phase_vec, image, params)
 %% Compute loss (L2)                                            
 % Basic parameters
 slmNh = params.slmNh; slmNw = params.slmNw;
