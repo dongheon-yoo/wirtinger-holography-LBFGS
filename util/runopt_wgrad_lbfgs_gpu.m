@@ -2,32 +2,25 @@
 function [optimPhase, history] = runopt_wgrad_lbfgs_gpu(phase_vec, image, params, options)
 % Basic parameters
 slmNh = params.slmNh; slmNw = params.slmNw;
-history.psnrVal = []; history.iter = [];
-history.variables = zeros(options.MaxIter, 6); % [alpha1, beta1, gamma1, alpha2, beta2, gamma2]
+history.mseVal = []; history.psnrVal = []; history.iter = [];
 options.OutputFcn = @lbfgs_outfun;
 propDist = params.propDist;
-blurIm = params.blurIm;
 
 % Start optimization
-optimFunc = @(x)loss_and_gradients(x, fieldIdeal, params);
+optimFunc = @(x)loss_and_gradients(x, image, params);
 
 % For recording
 f1 = figure; 
-[optimVariables, ~] = fminlbfgs_gpu(optimFunc, initVariables, options);
+[optimPhase, ~] = fminlbfgs_gpu(optimFunc, phase_vec, options);
     
     function stop = lbfgs_outfun(x, optimValues, state)
         stop = false;
         switch state
             case 'init'
             case 'iter'
-                % Record variables
-                history.variables(optimValues.iteration, :) = extractGPU(x(1 : 6).');
-                local_vars = extractGPU(history.variables);
-                csvwrite([params.dirname, './variables.csv'], local_vars);
-           
                 % Record & Plot
                 if rem(optimValues.iteration, params.steps_per_plot) == 0
-                    blurProp = reconFromVar(x, params);
+                    blurProp = reconFromPhase(x, params);
                     delta = reshape(x(7 : end), [slmNh, slmNw]);
                     delta = angle(exp(1.j .* delta));
                     delta = (delta + pi) / (2 * pi);
