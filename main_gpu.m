@@ -81,8 +81,8 @@ phi_vec = phi0(:);
 phi_vec = convertGPU(phi_vec);
 
 % Derivative check (Please check only once before optimization)
-% [user_grad, num_grad, diff] = derivativeCheck_gpu(phi_vec, im, params);
-% fprintf('Difference between user gradient & numerical gradient: %e\n', diff);
+[user_grad, num_grad, diff] = derivativeCheck_gpu(phi_vec, im, params);
+fprintf('Difference between user gradient & numerical gradient: %e\n', diff);
 
 %% Optimization via L-BFGS
 % Basic parameters
