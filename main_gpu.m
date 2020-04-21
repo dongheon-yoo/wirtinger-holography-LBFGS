@@ -77,32 +77,29 @@ switch init_method
         phi0 = rand(size(local_im)) .* 2 * pi;
     otherwise
 end
-
-options = optimset('fminunc');
-options.Display = 'iter';
-options.HessUpdate = 'bfgs';        
-options.GoalsExactAchieve = 1;
-options.GradObj = 'on';
-options.TolFun = 1e-7;
-options.FunValCheck = 'on';
-options.DerivativeCheck = 'on';
-options.MaxIter = 4000;
-options.MaxFunEvals = 1e7;
-options.TolFun = 1e-10;
-
-
 phi_vec = phi0(:);
 phi_vec = convertGPU(phi_vec);
 
 % Derivative check (Please check only once before optimization)
-[user_grad, num_grad, diff] = derivativeCheck(phi_vec, im_vec, params);
+[user_grad, num_grad, diff] = derivativeCheck_gpu(phi_vec, im, params);
 fprintf('Difference between user gradient & numerical gradient: %e\n', diff);
 
+%% Optimization via L-BFGS
+% Basic parameters
+options = optimset('fminunc');
+options.Display = 'iter';
+options.HessUpdate = 'bfgs';        
+options.GoalsExactAchieve = 0;
+options.GradObj = 'on';
+options.TolFun = 1e-10;
+options.FunValCheck = 'on';
+options.DerivativeCheck = 'off';
+options.MaxIter = 2000;
+options.MaxFunEvals = 1e7;
+options.TolFun = 1e-10;
+options.TolX = 1e-10;
 
 % Run optimization
-% if meanShift
-%     [phi_optim, mse_val, psnr_val, history] = runopt_wgrad_meanShift_gpu(phi_vec, im_vec, params, options);
-% else
-%     [phi_optim, mse_val, psnr_val, history] = runopt_wgrad(phi_vec, im_vec, params, options);
-% end
+[phi_optim, mse_val, psnr_val, history] = runopt_wgrad(phi_vec, im_vec, params, options);
+
 
