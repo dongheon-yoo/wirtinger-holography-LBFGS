@@ -1,23 +1,19 @@
-function blurProp = reconFromVarWirtinger(variables, params)
-%% Reconstruction from variables
+function IProp = reconFromVarPhase(phase_vec, params)
+%% Reconstruction from phase
 propDist = params.propDist;
-blurProp = cell(1, length(propDist));
 dx = params.dx; dy = params.dy; 
 slmNh = params.slmNh; slmNw = params.slmNw;
 lambda = params.lambda;
 
-optimDelta = reshape(variables, [slmNh, slmNw]);
+phase = reshape(phase_vec, [slmNh, slmNw]);
 
 % Creat complex field
-field = exp(1.j .* optimDelta);
+field = exp(1.j .* phase);
 
 % Reconstruction via ASM
-for i = 1 : length(propDist)
-    fieldProp = ASM(field, propDist(i), dx, dy, lambda);
-    IProp = abs(fieldProp) .^ 2;
-    % Global scaling
-    IProp = IProp ./ max(IProp(:));
-    blurProp{i} = max(min(IProp, 1), 0);
-end
+fieldProp = ASM(field, propDist, dx, dy, lambda);
+IProp = abs(fieldProp) .^ 2;
+% Global scaling
+IProp = max(min(IProp ./ max(IProp(:)), 1), 0);
 
 end
