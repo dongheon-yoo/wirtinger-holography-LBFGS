@@ -27,13 +27,10 @@ f1 = figure;
                     phase_name = [params.dirname, sprintf('/phase_%dIter.png', optimValues.iteration)];
                     imwrite(uint8(local_phi * 255), phase_name);
                     
-                    psnrVal = zeros(1, length(propDist));
-                    IProp = reconFromPhase(x, params);
-                    for idx = 1 : length(propDist)
-                        IProp = extractGPU(blurProp{idx});
-                        I_name = sprintf('/recon_%.2f.png', propDist(idx) * 1e3);
-                        I_name = [folder_name, I_name];
-                        imwrite(uint8(IProp * 255), I_name);
+                    IProp = extractGPU(reconFromPhase(x, params));
+                    I_name = sprintf('/recon_%dIter.png', optimValues.iteration);
+                    I_name = [params.dirname, I_name];
+                    imwrite(uint8(IProp * 255), I_name);
                         local_im = extractGPU(blurIm{idx});
                         pval = psnr(IProp, local_im);
                         psnrMean(idx) = pval;
