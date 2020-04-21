@@ -57,6 +57,27 @@ figure(1);
 imshow(im, []);
 colormap gray;
 
+% Initial phase
+switch init_method
+    case 'DPwithRand'
+        im_half = imresize(local_im, [slmNh, slmNw / 2]);
+        maxPhase = pi;
+        im_half = sqrt(im_half) .* exp(1.j * rand(size(im_half)) * maxPhase);
+        field_cplx = ASM(im_half, -z_prop, 2 * pp, pp, lambda);
+        hlg = encode_double_phase(field_cplx);
+        phi0 = angle(hlg);
+        
+    case 'DP'
+        im_half = imresize(local_im, [slmNh, slmNw / 2]);
+        field_cplx = ASM(sqrt(im_half), -z_prop, 2 * pp, pp, lambda);
+        hlg = encode_double_phase(field_cplx);
+        phi0 = angle(hlg);
+
+    case 'RP'
+        phi0 = rand(size(local_im)) .* 2 * pi;
+    otherwise
+end
+
 options = optimset('fminunc');
 options.Display = 'iter';
 options.HessUpdate = 'bfgs';        
@@ -69,26 +90,7 @@ options.MaxIter = 4000;
 options.MaxFunEvals = 1e7;
 options.TolFun = 1e-10;
 
-% Initial phase
-switch init_method
-    case 'DPwithRand'
-        im_half = imresize(im, [slm_Ny, slm_Nx / 2]);
-        maxPhase = pi;
-        im_half = sqrt(complex(im_half)) .* exp(1.j * rand(size(im_half)) * maxPhase);
-        field_cplx = ASM(im_half, -z_prop, 2 * pp, pp, lambda);
-        hlg = encode_double_phase_gpu(field_cplx);
-        phi0 = angle(hlg);
-        
-    case 'DP'
-        im_half = imresize(im, [slm_Ny, slm_Nx / 2]);
-        field_cplx = ASM(sqrt(complex(im_half)), -z_prop, 2 * pp, pp, lambda);
-        hlg = encode_double_phase_gpu(field_cplx);
-        phi0 = angle(hlg);
 
-    case 'RP'
-        phi0 = rand(size(im)) .* 2 * pi;
-    otherwise
-end
 phi_vec = phi0(:);
 phi_vec = convertGPU(phi_vec);
 
