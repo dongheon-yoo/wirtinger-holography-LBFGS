@@ -8,55 +8,54 @@ if canUseGPU
     gpuDevice(gpuIdx);
 end
 
+% Suppress warning
+warning('off', 'all');
+
 % Basic global parameters
 mm = 1e-3; um = 1e-6; nm = 1e-9;
 slmNh = 512; slmNw = 512;
-imMax = 512;
+imNmax = 512;
 lambda = 520 * nm;
 k = 2 * pi / lambda;
 pp = 6.4 * um;
 propDist = 20 * mm;
 init_method = 'DP'; % 'DPwithRand', 'DP' (Double phase) or 'RP' (Random phase)
+prepad = true;
+im_name = 'baboon.png';
 
 % Create directory
 dirname = sprintf('./WH_baboon');
 mkdir(dirname);
-dirname2 = sprintf('./lambda_%03d_pp_%0.1f_prop_%03d_init_%s', ...
+dirname2 = sprintf('./lambda_%03d_pp_%0.1f_prop_%03d_init_%s_prepad_%d', ...
                    floor(lambda * 1e9), ...
                    pp * 1e6, ...
                    z_prop * 1e3, ...
-                   init_method);
+                   init_method, ...
+                   double(prepad));
 mkdir([dirname dirname2]);
 
-% Read image
-im_name = 'baboon.png';
-color_im = imread(im_name);
-if size(color_im, 3) == 3, color_im = rgb2gray(color_im); end
-if max(size(color_im, [1, 2])) > imMax
-    scale = imMax / max(size(color_im, [1, 2]));
-    color_im = imresize(color_im, scale);
-end
-im = im2double(color_im);
-[imH, imW] = size(im, [1, 2]);
-padH1 = ceil((slm_Ny - imH) / 2); padH2 = slm_Ny - imH - padH1;
-padW1 = ceil((slm_Nx - imW) / 2); padW2 = slm_Nx - imW - padW1;
-im = padarray(im, [padH1, padW1], 'pre');
-im = padarray(im, [padH2, padW2], 'post');
-im = convertGPU(im); 
-im_vec = im(:);
-figure;
-imshow(im, []);
-colormap gray;
-
 % Optimization
-params.Nx = slm_Nx;
-params.Ny = slm_Ny;
+params.slmNh = slmNh;
+params.slmNw = slmNw;
+params.imNmax = imNmax;
 params.lambda = lambda;
 params.dx = pp;
 params.dy = pp;
 params.z_prop = z_prop;
+params.steps_per_plot = 50;
 params.dirname = [dirname dirname2];
 params.steps_per_plot = 20;
+params.prepad = prepad;
+
+% Read image
+im = imread_with_preprocess(im_name, params);
+local_im = im;
+params.local_im = local_im;
+im = convertGPU(im);
+
+figure(1);
+imshow(im, []);
+colormap gray;
 
 options = optimset('fminunc');
 options.Display = 'iter';
