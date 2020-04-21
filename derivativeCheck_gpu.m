@@ -1,4 +1,4 @@
-function [user_grad, num_grad, diff] = derivativeCheck_gpu(initVariables, params)
+function [user_grad, num_grad, diff] = derivativeCheck_gpu(phase_vec, image, params)
 %% Derivative check for variables
 [~, ugrads] = loss_and_gradients_2D_optim(initVariables, params);
 
