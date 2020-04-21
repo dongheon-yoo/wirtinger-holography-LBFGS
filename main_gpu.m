@@ -63,13 +63,13 @@ switch init_method
         im_half = imresize(local_im, [slmNh, slmNw / 2]);
         maxPhase = pi;
         im_half = sqrt(im_half) .* exp(1.j * rand(size(im_half)) * maxPhase);
-        field_cplx = ASM(im_half, -z_prop, 2 * pp, pp, lambda);
+        field_cplx = ASM(im_half, -propDist, 2 * pp, pp, lambda);
         hlg = encode_double_phase(field_cplx);
         phi0 = angle(hlg);
         
     case 'DP'
         im_half = imresize(local_im, [slmNh, slmNw / 2]);
-        field_cplx = ASM(sqrt(im_half), -z_prop, 2 * pp, pp, lambda);
+        field_cplx = ASM(sqrt(im_half), -propDist, 2 * pp, pp, lambda);
         hlg = encode_double_phase(field_cplx);
         phi0 = angle(hlg);
 
@@ -81,8 +81,8 @@ phi_vec = phi0(:);
 phi_vec = convertGPU(phi_vec);
 
 % Derivative check (Please check only once before optimization)
-[user_grad, num_grad, diff] = derivativeCheck_gpu(phi_vec, im, params);
-fprintf('Difference between user gradient & numerical gradient: %e\n', diff);
+% [user_grad, num_grad, diff] = derivativeCheck_gpu(phi_vec, im, params);
+% fprintf('Difference between user gradient & numerical gradient: %e\n', diff);
 
 %% Optimization via L-BFGS
 % Basic parameters
@@ -100,5 +100,5 @@ options.TolFun = 1e-10;
 options.TolX = 1e-10;
 
 % Run optimization
-% [optimPhase, history] = runopt_wgrad_lbfgs_gpu(phi_vec, im, params, options)
+[optimPhase, history] = runopt_wgrad_lbfgs_gpu(phi_vec, im, params, options)
 
