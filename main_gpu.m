@@ -21,15 +21,15 @@ pp = 6.4 * um;
 propDist = 20 * mm;
 init_method = 'DP'; % 'DPwithRand', 'DP' (Double phase) or 'RP' (Random phase)
 prepad = true;
-im_name = 'baboon.png';
+im_name = 'car.png';
 
 % Create directory
-dirname = sprintf('./WH_baboon');
+dirname = sprintf('./WH_car');
 mkdir(dirname);
 dirname2 = sprintf('./lambda_%03d_pp_%0.1f_prop_%03d_init_%s_prepad_%d', ...
                    floor(lambda * 1e9), ...
                    pp * 1e6, ...
-                   z_prop * 1e3, ...
+                   propDist * 1e3, ...
                    init_method, ...
                    double(prepad));
 mkdir([dirname dirname2]);
@@ -41,7 +41,7 @@ params.imNmax = imNmax;
 params.lambda = lambda;
 params.dx = pp;
 params.dy = pp;
-params.z_prop = z_prop;
+params.propDist = propDist;
 params.steps_per_plot = 50;
 params.dirname = [dirname dirname2];
 params.steps_per_plot = 20;
@@ -100,5 +100,5 @@ options.TolFun = 1e-10;
 options.TolX = 1e-10;
 
 % Run optimization
-[optimPhase, history] = runopt_wgrad_lbfgs_gpu(phi_vec, im, params, options)
+% [optimPhase, history] = runopt_wgrad_lbfgs_gpu(phi_vec, im, params, options)
 
