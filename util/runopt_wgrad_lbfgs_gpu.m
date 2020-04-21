@@ -10,7 +10,7 @@ propDist = params.propDist;
 optimFunc = @(x)loss_and_gradients(x, image, params);
 
 % For recording
-f1 = figure; 
+f1 = figure; f2 = figure;
 [optimPhase, ~] = fminlbfgs_gpu(optimFunc, phase_vec, options);
     
     function stop = lbfgs_outfun(x, optimValues, state)
@@ -31,11 +31,9 @@ f1 = figure;
                     I_name = sprintf('/recon_%dIter.png', optimValues.iteration);
                     I_name = [params.dirname, I_name];
                     imwrite(uint8(IProp * 255), I_name);
-                        local_im = extractGPU(blurIm{idx});
-                        pval = psnr(IProp, local_im);
-                        psnrMean(idx) = pval;
-                    end
-                    history.psnrVal = [history.psnrVal; mean(psnrMean)];
+                    pval = psnr(IProp, params.local_im);
+                    history.psnrVal = [history.psnrVal; pval];
+                    history.mseVal = [history.mseVal; optimValues.fval / numel(IProp)];
                     
                     history.iter = [history.iter; optimValues.iteration];
                     figure(f1);
@@ -43,6 +41,12 @@ f1 = figure;
                     xlabel('Iterations'); ylabel('PSNR (dB)');
                     title('PSNR (dB)');
                     saveas(f1,[params.dirname, './psnr.png']);
+                    
+                    figure(f2);
+                    plot(history.iter, history.mseVal);
+                    xlabel('Iterations'); ylabel('MSE');
+                    title('L2 Loss');
+                    saveas(f2,[params.dirname, './L2loss.png']);
    
                 end
                
