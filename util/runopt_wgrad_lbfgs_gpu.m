@@ -20,18 +20,18 @@ f1 = figure;
             case 'iter'
                 % Record & Plot
                 if rem(optimValues.iteration, params.steps_per_plot) == 0
-                    blurProp = reconFromPhase(x, params);
-                    delta = reshape(x(7 : end), [slmNh, slmNw]);
-                    delta = angle(exp(1.j .* delta));
-                    delta = (delta + pi) / (2 * pi);
-                    delta = extractGPU(delta);
+                    phi = reshape(x, [slmNh, slmNw]);
+                    phi = angle(exp(1.j .* phi));
+                    phi = (phi + pi) / (2 * pi);
+                    local_phi = extractGPU(phi);
                     folder_name = [params.dirname, sprintf('/%d Iter', optimValues.iteration)];
                     delta_name = '/phase.png';
                     mkdir(folder_name);
                     delta_name = [folder_name, delta_name];
                     imwrite(uint8(delta * 255), delta_name);
                     
-                    psnrMean = zeros(1, length(propDist));
+                    psnrVal = zeros(1, length(propDist));
+                    IProp = reconFromPhase(x, params);
                     for idx = 1 : length(propDist)
                         IProp = extractGPU(blurProp{idx});
                         I_name = sprintf('/recon_%.2f.png', propDist(idx) * 1e3);
