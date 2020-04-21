@@ -100,6 +100,6 @@ options.TolFun = 1e-10;
 options.TolX = 1e-10;
 
 % Run optimization
-[phi_optim, mse_val, psnr_val, history] = runopt_wgrad(phi_vec, im_vec, params, options);
+[phi_optim, mse_val, psnr_val, history] = runopt_wgrad(phi_vec, im, params, options);
 
 
