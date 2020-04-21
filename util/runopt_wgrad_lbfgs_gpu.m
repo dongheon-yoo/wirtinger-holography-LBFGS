@@ -24,11 +24,8 @@ f1 = figure;
                     phi = angle(exp(1.j .* phi));
                     phi = (phi + pi) / (2 * pi);
                     local_phi = extractGPU(phi);
-                    folder_name = [params.dirname, sprintf('/%d Iter', optimValues.iteration)];
-                    delta_name = '/phase.png';
-                    mkdir(folder_name);
-                    delta_name = [folder_name, delta_name];
-                    imwrite(uint8(delta * 255), delta_name);
+                    phase_name = [params.dirname, sprintf('/phase_%dIter.png', optimValues.iteration)];
+                    imwrite(uint8(local_phi * 255), phase_name);
                     
                     psnrVal = zeros(1, length(propDist));
                     IProp = reconFromPhase(x, params);
