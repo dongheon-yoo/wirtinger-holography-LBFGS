@@ -1,6 +1,6 @@
 %% Wirtinger holography using L-BFGS optimization
 close all;
-addpath ./fminlbfgs_version2c
+addpath ./fminlbfgs_version2c ./util
 FT = @(x) fftshift(fft2(ifftshift(x)));
 IFT = @(x) fftshift(ifft2(ifftshift(x)));
 if canUseGPU
