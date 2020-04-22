@@ -1,4 +1,4 @@
-function IProp = reconFromVarPhase(phase_vec, params)
+function IProp = reconFromPhase(phase_vec, params)
 %% Reconstruction from phase
 propDist = params.propDist;
 dx = params.dx; dy = params.dy; 
