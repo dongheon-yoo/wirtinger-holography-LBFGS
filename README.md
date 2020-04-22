@@ -2,6 +2,7 @@
 "Wirtinger Holography for Near-Eye Displays" Follow up code using MATLAB &amp; L-BFGS method
 
 # Dependencies
+* [Wirtinger Holography for Near-Eye Displays](https://www.cs.unc.edu/~cpk/wirtinger-holography.html)
 * [FMINLBFGS: Fast Limited Memory Optimizer by Dirk-Jan Kroon](https://kr.mathworks.com/matlabcentral/fileexchange/23245-fminlbfgs-fast-limited-memory-optimizer)
 
 # Start
