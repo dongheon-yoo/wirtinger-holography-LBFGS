@@ -26,6 +26,6 @@ function out = imread_with_preprocess(path_to_image, params)
         ow = slmNw - 2 * padSize;
         im = imresize(im, [oh, ow]);
         im = padarray(im, [padSize, padSize]);
-        out = im2double(im);
     end
+    out = im2double(im);
 end
