@@ -1,7 +1,6 @@
-# wirtinger-holography-LBFGS
-"Wirtinger Holography for Near-Eye Displays" Follow up code using MATLAB &amp; L-BFGS method
-
+# Follow up codes for "Wirtinger holography for Near-Eye Displays" MATLAB &amp; L-BFGS method
 Code link: [Github repo](https://github.com/dongheon-yoo/wirtinger-holography-LBFGS)
+
 # Dependencies
 * [Wirtinger Holography for Near-Eye Displays](https://www.cs.unc.edu/~cpk/wirtinger-holography.html)
 * [Holographic Near-Eye Displays Based on Overlap-Add Stereograms](https://github.com/computational-imaging/olas)
